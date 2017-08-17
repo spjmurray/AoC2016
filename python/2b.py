@@ -7,6 +7,22 @@ DDUURRLULDLULULLDUDDRURDDRLRDULUURURRLURDLRRDUUDLULDRDLDLRLULLRULLDRLDRRULUDRLDU
 URDLUDUDLULURUDRLUDLUDLRLRLLDDDDDLURURUURLRDUDLRRUUDUURDURUULDRRRDDDLDUURRRDLRULRRDLRUDUDLDDDLLLRLRLRUUUUUULURRRLRLUDULURLDLLDUUDDRUDLDUDRRLULLULLDURDDRRLLRLDLLLLRLULLDDDDLDULLRDUURDUDURRUULLDRULUDLUULUUDDLDDRDLULLULDLDRLDLRULLRLURDURUDRLDURDRULRLLLLURRURLRURUDUDRRUDUUDURDDRRDRLURLURRLDRRLLRLRUDLRLLRLDLDDRDLURLLDURUDDUUDRRLRUDLUDULDRUDDRDRDRURDLRLLRULDDURLUUUUDLUDRRURDDUUURRLRRDDLULLLDLRULRRRLDRRURRURRUUDDDLDRRURLRRRRDLDLDUDURRDDLLLUULDDLRLURLRRURDRUULDDDUDRDRUDRRLRLLLLLURDULDUDRLULDRLUULUDDDDUDDRDDLDDRLLRULRRURDDDRDDLDLULRDDRRURRUDRDDDDRURDRRURUUDUDDUURULLDRDULURUDUD"""
 
 
+class Vector(list):
+    def __init__(self, iterable):
+        super(Vector, self).__init__(iterable)
+
+    def __add__(self, vector):
+        return Vector((self[0] + vector[0], self[1] + vector[1]))
+
+    @property
+    def x(self):
+        return self[0]
+
+    @property
+    def y(self):
+        return self[1]
+
+
 def main():
     # What our keypad looks like
     keypad = [
@@ -17,29 +33,24 @@ def main():
         [None, None, '1', None, None],
     ]
     # Where we are, start at 5
-    x = 0
-    y = 2
+    position = Vector((0, 2))
+    # Moves
+    moves = {
+        'U': Vector(( 0,  1)),
+        'D': Vector(( 0, -1)),
+        'L': Vector((-1,  0)),
+        'R': Vector(( 1,  0)),
+    }
     # For each digit
     for line in INPUT.split("\n"):
         # For each character move in the specified direction, bounded to the keypad
         for character in line:
-            if character == 'U':
-                ty = min(y+1, 4)
-                if keypad[ty][x]:
-                    y = ty
-            elif character == 'D':
-                ty = max(y-1, 0)
-                if keypad[ty][x]:
-                    y = ty
-            elif character == 'R':
-                tx = min(x+1, 4)
-                if keypad[y][tx]:
-                    x = tx
-            else:
-                tx = max(x-1, 0)
-                if keypad[y][tx]:
-                    x = tx
-        print keypad[y][x]
+            next_position = position + moves[character]
+            next_position = Vector(max(min(x, 4), 0) for x in next_position)
+            # Only move if the destination is valid i.e. not None
+            if keypad[next_position.y][next_position.x]:
+                position = next_position
+        print keypad[position.y][position.x]
 
 if __name__ == '__main__':
     main()

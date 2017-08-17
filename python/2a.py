@@ -7,6 +7,24 @@ DDUURRLULDLULULLDUDDRURDDRLRDULUURURRLURDLRRDUUDLULDRDLDLRLULLRULLDRLDRRULUDRLDU
 URDLUDUDLULURUDRLUDLUDLRLRLLDDDDDLURURUURLRDUDLRRUUDUURDURUULDRRRDDDLDUURRRDLRULRRDLRUDUDLDDDLLLRLRLRUUUUUULURRRLRLUDULURLDLLDUUDDRUDLDUDRRLULLULLDURDDRRLLRLDLLLLRLULLDDDDLDULLRDUURDUDURRUULLDRULUDLUULUUDDLDDRDLULLULDLDRLDLRULLRLURDURUDRLDURDRULRLLLLURRURLRURUDUDRRUDUUDURDDRRDRLURLURRLDRRLLRLRUDLRLLRLDLDDRDLURLLDURUDDUUDRRLRUDLUDULDRUDDRDRDRURDLRLLRULDDURLUUUUDLUDRRURDDUUURRLRRDDLULLLDLRULRRRLDRRURRURRUUDDDLDRRURLRRRRDLDLDUDURRDDLLLUULDDLRLURLRRURDRUULDDDUDRDRUDRRLRLLLLLURDULDUDRLULDRLUULUDDDDUDDRDDLDDRLLRULRRURDDDRDDLDLULRDDRRURRUDRDDDDRURDRRURUUDUDDUURULLDRDULURUDUD"""
 
 
+class Vector(list):
+    def __init__(self, iterable):
+        super(Vector, self).__init__(iterable)
+
+    def __iadd__(self, vector):
+        self[0] += vector[0]
+        self[1] += vector[1]
+        return self
+
+    @property
+    def x(self):
+        return self[0]
+
+    @property
+    def y(self):
+        return self[1]
+
+
 def main():
     # What our keypad looks like
     keypad = [
@@ -15,21 +33,21 @@ def main():
         [1, 2, 3],
     ]
     # Where we are, start at 5
-    x = 1
-    y = 1
+    position = Vector((1, 1))
+    # Moves
+    moves = {
+        'U': Vector(( 0,  1)),
+        'D': Vector(( 0, -1)),
+        'L': Vector((-1,  0)),
+        'R': Vector(( 1,  0)),
+    }
     # For each digit
     for line in INPUT.split("\n"):
         # For each character move in the specified direction, bounded to the keypad
         for character in line:
-            if character == 'U':
-                y = min(y+1, 2)
-            elif character == 'D':
-                y = max(y-1, 0)
-            elif character == 'R':
-                x = min(x+1, 2)
-            else:
-                x = max(x-1, 0)
-        print keypad[y][x]
+            position += moves[character]
+            position = Vector(max(min(x, 2), 0) for x in position)
+        print keypad[position.y][position.x]
 
 if __name__ == '__main__':
     main()
